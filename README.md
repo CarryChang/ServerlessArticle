@@ -16,7 +16,7 @@
 
 * 第四篇：3分钟实现文本敏感词过滤 :kissing: 
 
-* 第五篇：Serverless实现图片压缩与水印 :sweat_smile:
+* 第五篇：Serverless实现图片压缩与水印 :kissing:
 
 * 第六篇：Serverless实现视频压缩与格式转换
 
