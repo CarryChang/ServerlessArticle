@@ -12,7 +12,7 @@
 
 * 第二篇：20行代码：Serverless架构下用Python轻松搞定图像分类 :kissing:
 
-* 第三篇：Serverless与NLP实现文本摘要和关键词提取 :sweat_smile:
+* 第三篇：Serverless与NLP实现文本摘要和关键词提取 :kissing:
 
 * 第四篇：3分钟实现文本敏感词过滤 :kissing: 
 
