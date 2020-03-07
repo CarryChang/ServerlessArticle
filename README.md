@@ -41,7 +41,7 @@
 
 * 第五篇：Serverless Blog开发（原生Serverless与Flask框架结合）:kissing:
 
-* 第六篇：基于Serverless Framework的人工智能小程序开发
+* 第六篇：基于Serverless Framework的人工智能小程序开发 :kissing:
 
 ## Serverlss Component开发实战（2篇）
 
