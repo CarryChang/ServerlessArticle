@@ -120,7 +120,7 @@ index执行结果：
 
 Flask部署到Serverless架构可以用@serverless/tencent-flask，但是这里为了更加深入了解传统框架如何部署到Serverless架构，所以此处自行'造轮子'实现，先来看一张图：
 
-![](../material/3-5-6.png)
+![](../material/3-5-7.png)
 
 在通常情况下，我们使用Flask等框架实际上要通过web_server，进入到下一个环节，而我们云函数更多是一个函数，本不需要启动web server，所以我们就可以直接调用wsgi_app这个方法，其中这里的environ就是我们刚才的通过对event/context等进行处理后的对象，start_response可以认为是我们的一种特殊的数据结构，例如我们的response结构形态等。所以，如果我们自己想要实现这个过程，不使用腾讯云flask-component，可以这样做：
 
