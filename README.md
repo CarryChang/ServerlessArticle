@@ -31,7 +31,7 @@
 
 ## Serverless项目实战（6篇）
 
-* 第一篇：基于Serverless快速实现简单版查询工具（文本相似度）
+* 第一篇：基于Serverless快速实现简单版查询工具（文本相似度） :kissing:
 
 * 第二篇：用Serverless开发一个表白藏头诗的快应用
 
