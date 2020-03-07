@@ -39,7 +39,7 @@
 
 * 第四篇：Serverless与人工智能实现微信公众号的智能服务
 
-* 第五篇：Serverless Blog开发（原生Serverless与Flask框架结合）
+* 第五篇：Serverless Blog开发（原生Serverless与Flask框架结合）:kissing:
 
 * 第六篇：基于Serverless Framework的人工智能小程序开发
 
