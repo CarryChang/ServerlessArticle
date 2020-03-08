@@ -4,7 +4,7 @@
 
 * 第一篇：Serverless：Hello world :kissing:
 
-* 第二篇：入门Serverless Framework开发者工具
+* 第二篇：入门Serverless Framework开发者工具 :kissing:
 
 ## Serverless各个领域实战（10篇）
 
