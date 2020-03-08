@@ -4,7 +4,9 @@
 
 
 在日常生活中，我们经常会遇到搜索照片的情况，尤其是对寻找过去很久的图片，记忆中仅剩下零散的记忆的时候，我们检索照片的方法通常是定位到大致的时间，然后一张一张的去查看，但是这种做法效率低下，还经常会漏掉我们的目标图片，所以这个时候，就迫切需要一款可以搜索图片的软件，即我们可以通过简单的文字描述，实现图片的快速检索。
+
 近几年微信小程序的发展速度飞快，从2017年年初，张小龙在2017微信公开课Pro上发布的小程序正式上线到目前为止，小程序已经覆盖了超过200个细分行业，服务超过1000亿人次用户，年交易增长超过600%，创造超过5000亿的商业价值。而小程序蓬勃发展的背后，是一群优秀的小程序开发者的不断贡献。
+
 本实例将会通过微信小程序，在Serverless架构上，实现一款基于人工智能的相册小工具，该款小工具可以在保证基础相册功能（新建相册、删除相册、上传图片、查看图片、删除图片）的基础上，增加搜索功能，即用户上传图片之后，基于Image Caption技术，自动对图片进行描述，实现Image to Text的过程，当用户进行搜索时，通过文本间的相似度，返回给用户最贴近的图片。
 
 
@@ -46,15 +48,17 @@
 ![](../material/3-6-8.png)
 
 
-## 开发总结
+## 项目开发
+
+### 初步了解Serverless Cli
 
 Serverless架构可以说是目前非常火热的项目，其凭借着按量付费、低成本运维、高效率开发等众多优点于一身，帮助我们的项目快速开发，快速迭代。而Serverless Framework则是一个非常高效的工具，其兼容了AWS，Google Cloud以及腾讯云等多家厂商的Serverless架构，为开发者提供一个多云的开发者工具，目前以腾讯云为例，其拥有Plugin和Components两个部分。
 
-这两个部分可以说是个有千秋，具体的大家可以[官方说明](https://cloud.tencent.com/document/product/1154/39005)，或者自己体验一下。我这里我只说几个我觉得很头疼的问题。
+这两个部分可以说是个有千秋，具体的大家可以官方说明，或者自己体验一下。我这里我只说几个我觉得很头疼的问题。
 
 * Plugin部署到线上的函数，会自动变更名字，例如我的函数是myFunction，我的服务和阶段是myService-Dev，那么函数部署到线上就是myService-Dev-myFunction，这样的函数名，很可能会让我的函数间调用等部分产生很多不可控因素。例如我现在的环境是Dev，我函数间调用就要写函数名是myService-Dev-myFunction，如果是我的环境是Test，此时就要写myService-Test-myFunction，我始终觉得，我更改环境应该只需要更改配置，而不是更深入的代码逻辑。所以我对Plugin的这个换名字问题很烦躁；
 * Plugin也是有优势的，例如他有Invoke、Remove以及部署单个函数的功能，同时Plugin也有全局变量，我觉得这个更像一个开发者工具，我可以开发、部署、调用、查看一些信息、指标以及删除回滚等操作，都可以通过Plugin完成，这点很给力，我喜欢；
-* Components可以看作是一个组件集，这里面包括了很多的Components，可以有基础的Components，例如cos、scf、apigateway等，也有一些拓展的Components，例如在cos上拓展出来的website，可以直接部署静态网站等，还有一些框架级的，例如Koa，Express，这些Components说实话，真的蛮方便的，腾讯官方也是有他们的[最佳实践](https://cloud.tencent.com/document/product/1154/39269)
+* Components可以看作是一个组件集，这里面包括了很多的Components，可以有基础的Components，例如cos、scf、apigateway等，也有一些拓展的Components，例如在cos上拓展出来的website，可以直接部署静态网站等，还有一些框架级的，例如Koa，Express，这些Components说实话，真的蛮方便的，腾讯官方也是有他们的最佳实践；
 * Components除了刚才所说的支持的产品多，可以部署框架之外，对我来说，最大吸引力在于这个东西，部署到线上的函数名字就是我指定的名字，不会出现额外的东西，这个我非常看重；
 * Components相对Plugin在功能上略显单薄，除了部署和删除，再没有其他，例如Plugin的Invoke，Rollback等等一切都没有，同时，我们如果有多个东西要部署，写到了一个Components的yaml上，那么我们每次部署都要部署所有的，如果我们认为，我们只修改了一个函数，并且不想重新部署其他函数从而注释掉其他函数，那么很抱歉告诉你，不行！他会看到你只有一个函数，并且帮你把你注释掉的函数在线上删除；
 * Components更多的定义是组件，所以每个组件就是一个东西，所以在Components上面，是没有全局变量这一说法，这点我觉得很坑。
@@ -62,6 +66,8 @@ Serverless架构可以说是目前非常火热的项目，其凭借着按量付�
 综上所述的几点，就是在除了官方文档的描述之外，我对Plugin和Components的对比，感情真的可谓是错综复杂，也很期待产品策略可以将二者合并，或者功能对齐，否则单用Plugin，功能上是很全面了，但是产品支持不全面，名字变化我真的不能忍（可能很多人都不能忍），单用Components，没有全局变量，没有更多功能，可谓是产品广度变了，便利增加了，但是功能太淡薄了，我对二者的感情，又恨又爱。
 
 经过了长久的思考，我觉得Plugin部署到线上会导致函数名字变化这个问题，我真的不能忍（或许我就是巨蟹座的强迫症吧，哈哈哈），而且，我个人认为，我未必就能需要到更多的功能，例如invoke，例如metrics等。所以我选择了Components来做这个项目。
+
+### 造轮子：全局变量组件
 
 说到Components做这项目，我就遇到了第一个难题，我的配置文件怎么办？我有很多的配置，我难道要在每个函数中写一遍？
 
@@ -96,12 +102,45 @@ Album_Login:
         mysql_password: ${Conf.mysql_password}
         mysql_db: ${Conf.mysql_db}
 ```
-这样，我就可以很简单轻松加愉快的，将我的配置信息统一提取到了一个配置的地方。另外这里说一下，我为啥要把一些配置信息放在环境变量，而不是统一放在一个配置文件中，因为环境变量在SCF中，会真的打到环境中，也就是说，你可以直接取到，我个人觉得比每次创建实例读取一次配置文件可能要性能好一些，可能只会好几毫秒，但是，我还是觉得这样做是比较优雅的。最主要的是，相比写到代码中和配置到单独的配置文件中，我这样做之后，我可以分享我的代码给别人，可以更好的保护的我的一些敏感信息。反正喜欢一种方法，有一万个理由，不管充分不充分。
+这样，我就可以很简单轻松加愉快的，将我的配置信息统一提取到了一个配置的地方。另外这里说一下，我为啥要把一些配置信息放在环境变量，而不是统一放在一个配置文件中，因为环境变量在SCF中，会真的打到环境中，也就是说，你可以直接取到，我个人觉得比每次创建实例读取一次配置文件可能要性能好一些，可能只会好几毫秒，但是，我还是觉得这样做是比较优雅的。最主要的是，相比写到代码中和配置到单独的配置文件中，我这样做之后，我可以分享我的代码给别人，可以更好的保护的我的一些敏感信息。
+
+### 数据库设计
+
+![](../material/3-6-13.png)
+
+数据库部分主要对相关的表和表之间的关系进行建立。
+首先需要创建项目所必须的表：
+```mysql
+
+CREATE DATABASE `album`;
+CREATE TABLE `album`.`tags` ( `tid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `remark` TEXT NULL , PRIMARY KEY (`tid`)) ENGINE = InnoDB;
+CREATE TABLE `album`.`category` ( `cid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `sorted` INT NOT NULL DEFAULT '1' , `user` INT NOT NULL , `remark` TEXT NULL , `publish` DATE NOT NULL , `area` VARCHAR(255) NULL , PRIMARY KEY (`cid`)) ENGINE = InnoDB;
+CREATE TABLE `album`.`users` ( `uid` INT NOT NULL AUTO_INCREMENT , `nickname` TEXT NOT NULL , `wechat` VARCHAR(255) NOT NULL , `remark` TEXT NULL , PRIMARY KEY (`uid`)) ENGINE = InnoDB;
+CREATE TABLE `album`.`photo` ( `pid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `small` VARCHAR(255) NOT NULL , `large` VARCHAR(255) NOT NULL , `category` INT NOT NULL , `tags` VARCHAR(255) NULL , `remark` TEXT NULL , `creattime` DATE NOT NULL , `creatarea` VARCHAR(255) NOT NULL , `user` INT NOT NULL ,  PRIMARY KEY (`pid`)) ENGINE = InnoDB;
+CREATE TABLE `album`.`photo_tags` ( `ptid` INT NOT NULL AUTO_INCREMENT , `tag` INT NOT NULL , `photo` INT NOT NULL , `remark` INT NULL , PRIMARY KEY (`ptid`)) ENGINE = InnoDB;
+
+```
+创建之后，逐步添加表之间的关系以及部分限制条件：
+```mysql
+
+ALTER TABLE `photo_tags` ADD CONSTRAINT `photo_tags_tags_alter` FOREIGN KEY (`tag`) REFERENCES `tags`(`tid`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+ALTER TABLE `photo_tags` ADD CONSTRAINT `photo_tags_photo_alter` FOREIGN KEY (`photo`) REFERENCES `photo`(`pid`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `photo` ADD CONSTRAINT `photo_category_alter` FOREIGN KEY (`category`) REFERENCES `category`(`cid`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `photo` ADD CONSTRAINT `photo_user_alter` FOREIGN KEY (`user`) REFERENCES `users`(`uid`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `category` ADD CONSTRAINT `category_user_alter` FOREIGN KEY (`user`) REFERENCES `users`(`uid`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `tags` ADD unique(`name`);
+
+```
+
+
+### 函数功能开发
 
 写完了这个部分部分，我开始着手写我的第一个函数，注册登录函数。因为这是一个小程序，所以可以认为，注册登录实际上就是拿着用户的openId去数据库查查有没有信息，有信息的话，就执行登录，没有信息的话就insert一下。那么问题来了，我这里要怎么连接我的数据库？之所以有这样的问题，是源自两个因素：
 
 * 我们平时做项目更多时候都不是每次连接一次数据库，很多时候，数据库的连接是可以保持下来的，但是Serverless架构下可以么？或者我们需要去哪里连接数据库呢？
 * 传统项目，我们做数据库连接等，是只有一个方法就可以搞定，但是函数中，每个函数都是单独存在的，我们每个函数都要连接一下数据库？
+
+#### 初始化资源探索
 
 针对问题1，我们来做一个实验，我去腾讯云云函数创建一个test：
 
@@ -250,7 +289,8 @@ def main_handler(event, context):
 
 ```
 
-是的，基本需求满足了，但是代码很难看，很恶心啊。
+#### 公共组件的编写
+
 
 * 这个函数，我要作为小程序的一个接口，那么就要接APIGW，那么我应该怎么赖在本地测试呢？难不成每次都发到线上配置APIGW触发器才能测试，我的天，太恶心了吧！
 * 这个函数需要数据库的连接，需要获取用户的信息等，难道别的函数不需要么？如果需要也要每个函数都要重复写这部分代码？或者说，代码的复用应该如何处理呢？是否可以提取公共组件呢？
@@ -415,7 +455,12 @@ class mysqlCommon:
 这样做的好处是：
 
 * 我将数据库提取出一个公共组件，便于维护
-* 在login函数中，我根据不同的时期（本地开发和线上），我导入不同的模块：
+* 在login函数中，我根据不同的时期（本地开发和线上），可以导入不同的模块
+
+#### 便于开发与测试的方法
+
+由于云函数的测试非常不友好，所以为了让编写代码时候，可以更快地模拟线上环境，可以通过增加`test()`方法来模拟触发器情况，进行简单的测试。
+
 ```python
 try:
     import cosClient
@@ -507,49 +552,18 @@ def setEnv():
 
  是的，这样我们就可以很简单轻松加愉快的将我们的公共组件库，在部署函数的时候，引入到项目中。
  
- 本地长这样：
+ 本地形式：
 
 ![](../material/3-6-11.png)
 
- 线上长这样：
+ 线上形式：
  
  ![](../material/3-6-12.png)
  
  对于这个项目，完美解决本地调试，线上运行的全兼容问题。
- 
- 通过上面简单的实验和分析，我们知道了如何制作公共组件库，如何定义Components的全局变量，如何本地调试和线上触发二者兼得，以及在什么地方初始化数据库"性价比较高"，完成了上面的所有部分，就是我们进行各个子功能函数编写的工作了，基本都是数据库的增删改查。此处不再一一描述。编写完函数之后，可以编写我们的小程序端。
- 
 
-## 项目开发
-### 数据库建立
 
-![](../material/3-6-13.png)
-
-数据库部分主要对相关的表和表之间的关系进行建立。
-首先需要创建项目所必须的表：
-```mysql
-
-CREATE DATABASE `album`;
-CREATE TABLE `album`.`tags` ( `tid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `remark` TEXT NULL , PRIMARY KEY (`tid`)) ENGINE = InnoDB;
-CREATE TABLE `album`.`category` ( `cid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `sorted` INT NOT NULL DEFAULT '1' , `user` INT NOT NULL , `remark` TEXT NULL , `publish` DATE NOT NULL , `area` VARCHAR(255) NULL , PRIMARY KEY (`cid`)) ENGINE = InnoDB;
-CREATE TABLE `album`.`users` ( `uid` INT NOT NULL AUTO_INCREMENT , `nickname` TEXT NOT NULL , `wechat` VARCHAR(255) NOT NULL , `remark` TEXT NULL , PRIMARY KEY (`uid`)) ENGINE = InnoDB;
-CREATE TABLE `album`.`photo` ( `pid` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `small` VARCHAR(255) NOT NULL , `large` VARCHAR(255) NOT NULL , `category` INT NOT NULL , `tags` VARCHAR(255) NULL , `remark` TEXT NULL , `creattime` DATE NOT NULL , `creatarea` VARCHAR(255) NOT NULL , `user` INT NOT NULL ,  PRIMARY KEY (`pid`)) ENGINE = InnoDB;
-CREATE TABLE `album`.`photo_tags` ( `ptid` INT NOT NULL AUTO_INCREMENT , `tag` INT NOT NULL , `photo` INT NOT NULL , `remark` INT NULL , PRIMARY KEY (`ptid`)) ENGINE = InnoDB;
-
-```
-创建之后，逐步添加表之间的关系以及部分限制条件：
-```mysql
-
-ALTER TABLE `photo_tags` ADD CONSTRAINT `photo_tags_tags_alter` FOREIGN KEY (`tag`) REFERENCES `tags`(`tid`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-ALTER TABLE `photo_tags` ADD CONSTRAINT `photo_tags_photo_alter` FOREIGN KEY (`photo`) REFERENCES `photo`(`pid`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `photo` ADD CONSTRAINT `photo_category_alter` FOREIGN KEY (`category`) REFERENCES `category`(`cid`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `photo` ADD CONSTRAINT `photo_user_alter` FOREIGN KEY (`user`) REFERENCES `users`(`uid`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `category` ADD CONSTRAINT `category_user_alter` FOREIGN KEY (`user`) REFERENCES `users`(`uid`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `tags` ADD unique(`name`);
-
-```
-
-### 让Code飞起来
+#### 项目部署
 
 * 在使用之前您需要有一个腾讯云的账号，并且开通了COS、COS、APIGW以及CDB等相关产品权限；
 * 将项目clone到本地，配置自己的密钥信息、数据库信息。配置文件在`cloudFunction`目录下的`serverless.yaml`中：
@@ -643,3 +657,7 @@ DEBUG ─ Resolving the template's static variables.
 
 ```
 例如我的这个过程，只用了156s部署了所有函数，然后打开小程序的id带入`miniProgram`目录，并且填写自己的`appid`在文件`project.config.json`的第17行，同时也要配置自己项目的基础目录，就是API网关给我们返回的地址，写在`app.js`的第10行，此时项目就可以运行起来了。
+
+## 总结
+
+本例子是通过Serverless架构使用Python语言开发了一个微信小程序，这里面涉及到了数据库的增删改查，公共组件的提取，知道了如何定义Components的全局变量，如何本地调试和线上触发二者兼得，以及在什么地方初始化数据库"性价比较高"，通过这样一个简单的例子，希望可以让Serverless在更多的领域都有实际的应用价值，可以给更多人灵感和启发：Serverless？万物都可以Serverless么？让我们一起来尝试更多Serverless架构的应用领域吧。
