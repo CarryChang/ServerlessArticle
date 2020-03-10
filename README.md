@@ -8,7 +8,7 @@
 
 ## Serverless各个领域实战（10篇）
 
-* 第一篇：通过Serverless架构实现监控告警能力
+* 第一篇：通过Serverless架构实现监控告警能力 :kissing:
 
 * 第二篇：20行代码：Serverless架构下用Python轻松搞定图像分类 :kissing:
 
