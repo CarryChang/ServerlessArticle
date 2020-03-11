@@ -61,7 +61,7 @@
 
 * 第五篇：Serverless架构下如何进行调试与日志的实时输出 :sweat_smile:
 
-* 第六篇： Serverless架构下的函数资源评估的意义
+* 第六篇： Serverless架构下的函数资源评估的意义 :kissing:
 
 
 ## 作者介绍
