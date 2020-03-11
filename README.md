@@ -20,13 +20,13 @@
 
 * 第六篇：Serverless实现视频压缩与格式转换
 
-* 第七篇：函数计算与对象存储实现WordCount :sweat_smile:
+* 第七篇：函数计算与对象存储实现WordCount :kissing:
 
 * 第八篇：一键部署基于函数计算与API网关、MySQL的聊天室软件 :sweat_smile:
 
 * 第九篇：企业微信机器人：让你每天都可以了解世界 :sweat_smile:
 
-* 第十篇：让Serverless为你的头像增加点装饰 :sweat_smile:
+* 第十篇：让Serverless为你的头像增加点装饰 :kissing:
 
 
 ## Serverless项目实战（6篇）
